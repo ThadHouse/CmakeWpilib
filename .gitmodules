@@ -1,0 +1,12 @@
+[submodule "libraries/ntcore/ntcore"]
+	path = libraries/ntcore/ntcore
+	url = https://github.com/wpilibsuite/ntcore
+	branch = master
+[submodule "libraries/cscore/cscore"]
+	path = libraries/cscore/cscore
+	url = https://github.com/wpilibsuite/cscore
+	branch = master
+[submodule "libraries/wpiutil/wpiutil"]
+	path = libraries/wpiutil/wpiutil
+	url = https://github.com/wpilibsuite/wpiutil
+	branch = master
