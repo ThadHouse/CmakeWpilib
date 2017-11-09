@@ -3,12 +3,17 @@ cmake_minimum_required(VERSION 3.9.0)
 
 # flags and config
 set (CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
-# includes and building the other stuff
+set(WPIUTIL_INCLUDE_DIR libraries/wpiutil/wpiutil/src/main/native/include)
+set(NTCORE_INCLUDE_DIR libraries/ntcore/ntcore/src/main/native/include)
+set(CSCORE_INCLUDE_DIR libraries/cscore/cscore/src/main/native/include)
+include_directories(${WPIUTIL_INCLUDE_DIR} ${NTCORE_INCLUDE_DIR})
+
 add_subdirectory(libraries)
 
-include_directories(libraries/wpiutil/wpiutil/src/main/native/include)
-
-add_executable(tk1_wpiutil_test main.cpp)
-
+add_executable(tk1_wpiutil_test wpiutil_main.cpp)
 target_link_libraries(tk1_wpiutil_test wpiutil)
+
+add_executable(tk1_ntcore_test ntcore_main.cpp)
+target_link_libraries(tk1_ntcore_test ntcore)
