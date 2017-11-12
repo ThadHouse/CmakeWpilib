@@ -1,4 +1,4 @@
-project(tk1_wpiutil_test)
+project(wpilib_camera_vision)
 cmake_minimum_required(VERSION 2.8.0)
 
 # flags and config
@@ -11,8 +11,8 @@ endif()
 
 add_subdirectory(libraries)
 
-add_executable(tk1_wpiutil_test wpiutil_main.cpp)
-target_link_libraries(tk1_wpiutil_test wpiutil)
 
-add_executable(tk1_ntcore_test ntcore_main.cpp)
-target_link_libraries(tk1_ntcore_test ntcore)
+file(GLOB native_src src/*.cpp)
+add_executable(camera_vision ${native_src})
+target_link_libraries(camera_vision ntcore wpiutil cscore)
+target_include_directories(camera_vision PUBLIC include)
