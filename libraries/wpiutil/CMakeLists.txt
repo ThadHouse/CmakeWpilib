@@ -22,10 +22,6 @@ target_include_directories(wpiutil PUBLIC
                             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/wpiutil/src/main/native/include>
                             $<INSTALL_INTERFACE:${include_dest}/wpiutil>)
 
-if (NOT WIHTOUT_JAVA)
-    install(TARGETS wpiutil DESTINATION "${java_lib_dest}/jni")
-endif()
-
 install(TARGETS wpiutil EXPORT wpiutil DESTINATION "${main_lib_dest}")
 install(DIRECTORY wpiutil/src/main/native/include/ DESTINATION "${include_dest}/wpiutil")
 install(FILES wpiutil-config.cmake DESTINATION "${wpilib_dest}")

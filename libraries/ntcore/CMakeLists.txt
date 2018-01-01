@@ -38,7 +38,6 @@ target_link_libraries(ntcore wpiutil)
 
 if (NOT WIHTOUT_JAVA)
     add_dependencies(ntcore ntcore_jni_headers)
-    install(TARGETS ntcore DESTINATION "${java_lib_dest}/jni")
 endif()
 
 install(TARGETS ntcore EXPORT ntcore DESTINATION "${main_lib_dest}")

@@ -37,7 +37,6 @@ if (NOT WITHOUT_JAVA)
 
     install(FILES ${CSCORE_JAR_FILE} DESTINATION "${java_lib_dest}")
     install(FILES ${OPENCV_JAR_FILE} DESTINATION "${java_lib_dest}")
-    install(FILES ${OPENCV_JNI_FILE} DESTINATION "${java_lib_dest}/jni")
 endif()
 
 file(GLOB cscore_native_src cscore/src/main/native/cpp/*.cpp)
@@ -49,7 +48,6 @@ target_include_directories(cscore PUBLIC
 
 if (NOT WIHTOUT_JAVA)
     add_dependencies(cscore cscore_jni_headers)
-    install(TARGETS cscore DESTINATION "${java_lib_dest}/jni")
 endif()
 
 install(TARGETS cscore EXPORT cscore DESTINATION "${main_lib_dest}")
