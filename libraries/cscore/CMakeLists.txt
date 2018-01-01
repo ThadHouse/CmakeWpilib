@@ -56,7 +56,7 @@ if (NOT WITHOUT_JAVA)
 endif()
 
 file(GLOB cscore_native_src cscore/src/main/native/cpp/*.cpp)
-add_library(cscore SHARED ${cscore_native_src} ${cscore_native_src})
+add_library(cscore SHARED ${cscore_native_src} ${cscore_native_src} ${cscore_jni_src})
 target_link_libraries(cscore wpiutil ${OpenCV_LIBS})
 target_include_directories(cscore PUBLIC cscore/src/main/native/include)
 
