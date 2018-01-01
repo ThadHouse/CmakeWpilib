@@ -23,11 +23,7 @@ if (NOT WITHOUT_JAVA)
                 OUTPUT_DIR jniheaders)
     include_directories("${CMAKE_CURRENT_BINARY_DIR}\\jniheaders\\jniheaders")
     get_property(NTCORE_JAR_FILE TARGET ntcore_jar PROPERTY JAR_FILE)
-    add_custom_command(
-        TARGET ntcore_jar
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${NTCORE_JAR_FILE} ${CMAKE_BINARY_DIR}/outputs/java/ntcore.jar
-    )
+    install(FILES ${NTCORE_JAR_FILE} DESTINATION "${java_lib_dest}")
 endif()
 
 file(GLOB
@@ -35,17 +31,17 @@ file(GLOB
     ntcore_native_src ntcore/src/main/native/cpp/networktables/*.cpp
     ntcore_native_src ntcore/src/main/native/cpp/tables/*.cpp)
 add_library(ntcore SHARED ${ntcore_native_src} ${ntcore_jni_src})
-target_include_directories(ntcore PUBLIC ntcore/src/main/native/include)
+target_include_directories(ntcore PUBLIC
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ntcore/src/main/native/include>
+                            $<INSTALL_INTERFACE:${include_dest}/ntcore>)
 target_link_libraries(ntcore wpiutil)
 
 if (NOT WIHTOUT_JAVA)
     add_dependencies(ntcore ntcore_jni_headers)
+    install(TARGETS ntcore DESTINATION "${java_lib_dest}/jni")
 endif()
 
-add_custom_command(
-    TARGET ntcore
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:ntcore> ${CMAKE_BINARY_DIR}/outputs/native/$<TARGET_FILE_NAME:ntcore>
-)
-
-file(COPY ntcore/src/main/native/include DESTINATION ${CMAKE_BINARY_DIR}/outputs)
+install(TARGETS ntcore EXPORT ntcore DESTINATION "${main_lib_dest}")
+install(DIRECTORY ntcore/src/main/native/include/ DESTINATION "${include_dest}/ntcore")
+install(FILES ntcore-config.cmake DESTINATION "${wpilib_dest}")
+install(EXPORT ntcore DESTINATION "${wpilib_dest}")

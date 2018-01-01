@@ -34,40 +34,25 @@ if (NOT WITHOUT_JAVA)
                 OUTPUT_DIR jniheaders)
     include_directories("${CMAKE_CURRENT_BINARY_DIR}\\jniheaders\\jniheaders")
     get_property(CSCORE_JAR_FILE TARGET cscore_jar PROPERTY JAR_FILE)
-    add_custom_command(
-        TARGET cscore_jar
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${CSCORE_JAR_FILE} ${CMAKE_BINARY_DIR}/outputs/java/cscore.jar
-    )
 
-    get_filename_component(OPENCV_JAR_FILE_NAME ${OPENCV_JAR_FILE} NAME)
-    get_filename_component(OPENCV_JNI_FILE_NAME ${OPENCV_JNI_FILE} NAME)
-
-    add_custom_command(
-        TARGET cscore_jar
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${OPENCV_JAR_FILE} ${CMAKE_BINARY_DIR}/outputs/java/${OPENCV_JAR_FILE_NAME}
-    )
-    add_custom_command(
-        TARGET cscore_jar
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${OPENCV_JNI_FILE} ${CMAKE_BINARY_DIR}/outputs/native/${OPENCV_JNI_FILE_NAME}
-    )
+    install(FILES ${CSCORE_JAR_FILE} DESTINATION "${java_lib_dest}")
+    install(FILES ${OPENCV_JAR_FILE} DESTINATION "${java_lib_dest}")
+    install(FILES ${OPENCV_JNI_FILE} DESTINATION "${java_lib_dest}/jni")
 endif()
 
 file(GLOB cscore_native_src cscore/src/main/native/cpp/*.cpp)
 add_library(cscore SHARED ${cscore_native_src} ${cscore_native_src} ${cscore_jni_src})
 target_link_libraries(cscore wpiutil ${OpenCV_LIBS})
-target_include_directories(cscore PUBLIC cscore/src/main/native/include)
+target_include_directories(cscore PUBLIC
+                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cscore/src/main/native/include>
+                            $<INSTALL_INTERFACE:${include_dest}/cscore>)
 
 if (NOT WIHTOUT_JAVA)
     add_dependencies(cscore cscore_jni_headers)
+    install(TARGETS cscore DESTINATION "${java_lib_dest}/jni")
 endif()
 
-add_custom_command(
-    TARGET cscore
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cscore> ${CMAKE_BINARY_DIR}/outputs/native/$<TARGET_FILE_NAME:cscore>
-)
-
-file(COPY cscore/src/main/native/include DESTINATION ${CMAKE_BINARY_DIR}/outputs)
+install(TARGETS cscore EXPORT cscore DESTINATION "${main_lib_dest}")
+install(DIRECTORY cscore/src/main/native/include/ DESTINATION "${include_dest}/cscore")
+install(FILES cscore-config.cmake DESTINATION "${wpilib_dest}")
+install(EXPORT cscore DESTINATION "${wpilib_dest}")

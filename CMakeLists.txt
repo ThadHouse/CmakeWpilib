@@ -11,10 +11,14 @@ elseif(APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wformat=2 -Wall -Wextra -Werror -pedantic -Wno-unused-parameter")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wformat=2 -Wall -Wextra -Werror -pedantic -Wno-unused-parameter -pthread")
-
 endif()
 
-add_subdirectory(libraries)
+option(WITHOUT_JAVA "don't include java and JNI in the build" OFF)
 
-add_executable(test_exe test_main.cpp)
-target_link_libraries(test_exe wpiutil ntcore cscore)
+set( wpilib_dest wpilib)
+set( include_dest wpilib/include )
+set( main_lib_dest wpilib/lib )
+set( java_lib_dest wpilib/java )
+
+add_subdirectory(libraries)
+add_subdirectory(vision_app)
