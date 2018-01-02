@@ -42,3 +42,5 @@ set( java_lib_dest wpilib/java )
 
 add_subdirectory(libraries)
 add_subdirectory(vision_app)
+
+install(FILES wpilib-config.cmake DESTINATION share/wpilib)

@@ -52,5 +52,5 @@ endif()
 
 install(TARGETS cscore EXPORT cscore DESTINATION "${main_lib_dest}")
 install(DIRECTORY cscore/src/main/native/include/ DESTINATION "${include_dest}/cscore")
-install(FILES cscore-config.cmake DESTINATION "${wpilib_dest}")
-install(EXPORT cscore DESTINATION "${wpilib_dest}")
+install(FILES cscore-config.cmake DESTINATION share/cscore)
+install(EXPORT cscore DESTINATION share/cscore)
