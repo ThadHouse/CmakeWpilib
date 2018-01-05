@@ -24,5 +24,12 @@ target_include_directories(wpiutil PUBLIC
 
 install(TARGETS wpiutil EXPORT wpiutil DESTINATION "${main_lib_dest}")
 install(DIRECTORY wpiutil/src/main/native/include/ DESTINATION "${include_dest}/wpiutil")
-install(FILES wpiutil-config.cmake DESTINATION share/wpiutil)
-install(EXPORT wpiutil DESTINATION share/wpiutil)
+
+if (MSVC)
+    set (wpiutil_config_dir ${wpilib_dest})
+else()
+    set (wpiutil_config_dir share/wpiutil)
+endif()
+
+install(FILES wpiutil-config.cmake DESTINATION ${wpiutil_config_dir})
+install(EXPORT wpiutil DESTINATION ${wpiutil_config_dir})

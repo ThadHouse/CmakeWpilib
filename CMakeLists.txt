@@ -1,3 +1,11 @@
+# Disable in-source builds to prevent source tree corruption.
+if(" ${CMAKE_SOURCE_DIR}" STREQUAL " ${CMAKE_BINARY_DIR}")
+  message(FATAL_ERROR "
+FATAL: In-source builds are not allowed.
+       You should create a separate directory for build files.
+")
+endif()
+
 project(wpilib_vision)
 cmake_minimum_required(VERSION 3.3.0)
 
@@ -35,12 +43,20 @@ endif()
 
 option(WITHOUT_JAVA "don't include java and JNI in the build" OFF)
 
+
+
 set( wpilib_dest wpilib)
 set( include_dest wpilib/include )
 set( main_lib_dest wpilib/lib )
 set( java_lib_dest wpilib/java )
 
+if (MSVC)
+    set (wpilib_config_dir ${wpilib_dest})
+else()
+    set (wpilib_config_dir share/wpilib)
+endif()
+
 add_subdirectory(libraries)
 add_subdirectory(vision_app)
 
-install(FILES wpilib-config.cmake DESTINATION share/wpilib)
+install(FILES wpilib-config.cmake DESTINATION ${wpilib_config_dir})

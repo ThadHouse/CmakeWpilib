@@ -42,5 +42,12 @@ endif()
 
 install(TARGETS ntcore EXPORT ntcore DESTINATION "${main_lib_dest}")
 install(DIRECTORY ntcore/src/main/native/include/ DESTINATION "${include_dest}/ntcore")
-install(FILES ntcore-config.cmake DESTINATION share/ntcore)
-install(EXPORT ntcore DESTINATION share/ntcore)
+
+if (MSVC)
+    set (ntcore_config_dir ${wpilib_dest})
+else()
+    set (ntcore_config_dir share/ntcore)
+endif()
+
+install(FILES ntcore-config.cmake DESTINATION ${ntcore_config_dir})
+install(EXPORT ntcore DESTINATION ${ntcore_config_dir})
