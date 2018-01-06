@@ -3,8 +3,8 @@ project(ntcore)
 
 # Java bindings
 if (NOT WITHOUT_JAVA)
-    find_package(Java)
-    find_package(JNI)
+    find_package(Java REQUIRED)
+    find_package(JNI REQUIRED)
     include(UseJava)
     set(CMAKE_JAVA_COMPILE_FLAGS "-Xlint:unchecked")
 
@@ -30,13 +30,13 @@ file(GLOB
     ntcore_native_src ntcore/src/main/native/cpp/*.cpp
     ntcore_native_src ntcore/src/main/native/cpp/networktables/*.cpp
     ntcore_native_src ntcore/src/main/native/cpp/tables/*.cpp)
-add_library(ntcore SHARED ${ntcore_native_src} ${ntcore_jni_src})
+add_library(ntcore ${ntcore_native_src} ${ntcore_jni_src})
 target_include_directories(ntcore PUBLIC
                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ntcore/src/main/native/include>
                             $<INSTALL_INTERFACE:${include_dest}/ntcore>)
 target_link_libraries(ntcore wpiutil)
 
-if (NOT WIHTOUT_JAVA)
+if (NOT WITHOUT_JAVA)
     add_dependencies(ntcore ntcore_jni_headers)
 endif()
 

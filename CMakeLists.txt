@@ -6,10 +6,21 @@ FATAL: In-source builds are not allowed.
 ")
 endif()
 
+
 project(wpilib_vision)
 cmake_minimum_required(VERSION 3.3.0)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND MSVC)
+    message("Entered")
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Default install dir on windows" FORCE)
+endif()
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_JAVA_TARGET_OUTPUT_DIR ${CMAKE_BINARY_DIR}/jar)
 
 # use, i.e. don't skip the full RPATH for the build tree
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
@@ -33,17 +44,17 @@ ENDIF("${isSystemDir}" STREQUAL "-1")
 
 # flags and config
 
-if (MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DNOMINMAX /D_SCL_SECURE_NO_WARNINGS /D_WINSOCK_DEPRECATED_NO_WARNINGS /Zi /FS /Zc:inline /MT")
-elseif(APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wformat=2 -Wall -Wextra -Werror -pedantic -Wno-unused-parameter")
-else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wformat=2 -Wall -Wextra -Werror -pedantic -Wno-unused-parameter -pthread")
-endif()
-
 option(WITHOUT_JAVA "don't include java and JNI in the build" OFF)
+option(BUILD_SHARED_LIBS "build with shared libs (needed for JNI)" ON)
+option(WITHOUT_CSCORE "Don't build cscore (removes OpenCV requirement)" OFF)
 
-
+if (NOT WITHOUT_JAVA AND NOT BUILD_SHARED_LIBS)
+    message(FATAL_ERROR "
+FATAL: Cannot build static libs with Java enabled.
+       Static libs requires both BUILD_SHARED_LIBS=OFF and
+       WITHOUT_JAVA=ON
+")
+endif()
 
 set( wpilib_dest wpilib)
 set( include_dest wpilib/include )
@@ -59,4 +70,10 @@ endif()
 add_subdirectory(libraries)
 add_subdirectory(vision_app)
 
-install(FILES wpilib-config.cmake DESTINATION ${wpilib_config_dir})
+
+if (NOT WITHOUT_CSCORE)
+    set (CSCORE_DEP_REPLACE "find_dependency(cscore)")
+endif()
+
+configure_file(wpilib-config.cmake.in ${CMAKE_BINARY_DIR}/wpilib-config.cmake )
+install(FILES ${CMAKE_BINARY_DIR}/wpilib-config.cmake DESTINATION ${wpilib_config_dir})

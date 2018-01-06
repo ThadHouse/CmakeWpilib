@@ -4,8 +4,8 @@ find_package( OpenCV REQUIRED )
 
 # Java bindings
 if (NOT WITHOUT_JAVA)
-    find_package(Java)
-    find_package(JNI)
+    find_package(Java REQUIRED)
+    find_package(JNI REQUIRED)
     include(UseJava)
     set(CMAKE_JAVA_COMPILE_FLAGS "-Xlint:unchecked")
 
@@ -40,13 +40,13 @@ if (NOT WITHOUT_JAVA)
 endif()
 
 file(GLOB cscore_native_src cscore/src/main/native/cpp/*.cpp)
-add_library(cscore SHARED ${cscore_native_src} ${cscore_native_src} ${cscore_jni_src})
+add_library(cscore ${cscore_native_src} ${cscore_native_src} ${cscore_jni_src})
 target_link_libraries(cscore wpiutil ${OpenCV_LIBS})
 target_include_directories(cscore PUBLIC
                  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cscore/src/main/native/include>
                             $<INSTALL_INTERFACE:${include_dest}/cscore>)
 
-if (NOT WIHTOUT_JAVA)
+if (NOT WITHOUT_JAVA)
     add_dependencies(cscore cscore_jni_headers)
 endif()
 
