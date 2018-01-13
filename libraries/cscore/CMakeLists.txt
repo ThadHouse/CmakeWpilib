@@ -37,14 +37,20 @@ if (NOT WITHOUT_JAVA)
 
     install(FILES ${CSCORE_JAR_FILE} DESTINATION "${java_lib_dest}")
     install(FILES ${OPENCV_JAR_FILE} DESTINATION "${java_lib_dest}")
+
+    set_property(TARGET cscore_jar PROPERTY FOLDER "java")
+    set_property(TARGET cscore_jni_headers PROPERTY FOLDER "java")
+
 endif()
 
 file(GLOB cscore_native_src cscore/src/main/native/cpp/*.cpp)
-add_library(cscore ${cscore_native_src} ${cscore_native_src} ${cscore_jni_src})
+add_library(cscore ${cscore_native_src} ${cscore_jni_src})
 target_link_libraries(cscore wpiutil ${OpenCV_LIBS})
 target_include_directories(cscore PUBLIC
                  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cscore/src/main/native/include>
                             $<INSTALL_INTERFACE:${include_dest}/cscore>)
+
+set_property(TARGET cscore PROPERTY FOLDER "libraries")
 
 if (NOT WITHOUT_JAVA)
     add_dependencies(cscore cscore_jni_headers)

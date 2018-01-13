@@ -24,6 +24,10 @@ if (NOT WITHOUT_JAVA)
     include_directories("${CMAKE_CURRENT_BINARY_DIR}\\jniheaders\\jniheaders")
     get_property(NTCORE_JAR_FILE TARGET ntcore_jar PROPERTY JAR_FILE)
     install(FILES ${NTCORE_JAR_FILE} DESTINATION "${java_lib_dest}")
+
+    set_property(TARGET ntcore_jar PROPERTY FOLDER "java")
+    set_property(TARGET ntcore_jni_headers PROPERTY FOLDER "java")
+
 endif()
 
 file(GLOB
@@ -35,6 +39,8 @@ target_include_directories(ntcore PUBLIC
                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ntcore/src/main/native/include>
                             $<INSTALL_INTERFACE:${include_dest}/ntcore>)
 target_link_libraries(ntcore wpiutil)
+
+set_property(TARGET ntcore PROPERTY FOLDER "libraries")
 
 if (NOT WITHOUT_JAVA)
     add_dependencies(ntcore ntcore_jni_headers)

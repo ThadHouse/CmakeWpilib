@@ -11,9 +11,9 @@ project(wpilib_vision)
 cmake_minimum_required(VERSION 3.3.0)
 
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND MSVC)
-    message("Entered")
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Default install dir on windows" FORCE)
 endif()
 

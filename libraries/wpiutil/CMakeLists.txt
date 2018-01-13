@@ -14,13 +14,18 @@ if (NOT WITHOUT_JAVA)
   get_property(WPIUTIL_JAR_FILE TARGET wpiutil_jar PROPERTY JAR_FILE)
   install(FILES ${WPIUTIL_JAR_FILE} DESTINATION "${java_lib_dest}")
 
+  set_property(TARGET wpiutil_jar PROPERTY FOLDER "java")
+
 endif()
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 file(GLOB_RECURSE wpiutil_native_src wpiutil/src/main/native/cpp/*.cpp)
+
 add_library(wpiutil ${wpiutil_native_src})
+
+set_property(TARGET wpiutil PROPERTY FOLDER "libraries")
 
 if(NOT MSVC)
     target_compile_options(wpiutil PUBLIC -std=c++11 -Wall -pedantic -Wextra)
