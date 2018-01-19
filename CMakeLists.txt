@@ -8,9 +8,13 @@ endif()
 
 
 project(wpilib_vision)
-cmake_minimum_required(VERSION 3.3.0)
 
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+if (MSVC)
+    cmake_minimum_required(VERSION 3.3.0)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+else()
+    cmake_minimum_required(VERSION 2.8)
+endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND MSVC)
