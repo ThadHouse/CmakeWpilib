@@ -47,6 +47,8 @@ ENDIF("${isSystemDir}" STREQUAL "-1")
 option(WITHOUT_JAVA "don't include java and JNI in the build" OFF)
 option(BUILD_SHARED_LIBS "build with shared libs (needed for JNI)" ON)
 option(WITHOUT_CSCORE "Don't build cscore (removes OpenCV requirement)" OFF)
+option(WITHOUT_ALLWPILIB "Don't build allwpilib (removes OpenCV requirement)" ON)
+option(USE_PACKAGE_HAL "Use a separately built HAL" OFF)
 
 if (NOT WITHOUT_JAVA AND NOT BUILD_SHARED_LIBS)
     message(FATAL_ERROR "
@@ -73,6 +75,15 @@ add_subdirectory(vision_app)
 
 if (NOT WITHOUT_CSCORE)
     set (CSCORE_DEP_REPLACE "find_dependency(cscore)")
+endif()
+
+if (NOT WITHOUT_ALLWPILIB)
+    set (HAL_DEP_REPLACE "find_dependency(wpiHal)")
+    set (WPILIBC_DEP_REPLACE "find_dependency(wpilibc)")
+endif()
+
+if (USE_PACKAGE_HAL)
+    set (HAL_DEP_REPLACE "")
 endif()
 
 configure_file(wpilib-config.cmake.in ${CMAKE_BINARY_DIR}/wpilib-config.cmake )
