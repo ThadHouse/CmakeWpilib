@@ -10,3 +10,6 @@
 	path = libraries/wpiutil/wpiutil
 	url = https://github.com/wpilibsuite/wpiutil
 	branch = master
+[submodule "libraries/allwpilib/allwpilib"]
+	path = libraries/allwpilib/allwpilib
+	url = https://github.com/wpilibsuite/allwpilib
