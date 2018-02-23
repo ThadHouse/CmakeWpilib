@@ -30,7 +30,7 @@ set_property(TARGET wpiutil PROPERTY FOLDER "libraries")
 if(NOT MSVC)
     target_compile_options(wpiutil PUBLIC -std=c++11 -Wall -pedantic -Wextra -Wno-unused-parameter)
 else()
-    target_compile_options(wpiutil PUBLIC )
+    target_compile_options(wpiutil PUBLIC -DNOMINMAX)
 endif()
 
 target_link_libraries(wpiutil Threads::Threads)

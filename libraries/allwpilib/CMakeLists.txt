@@ -38,7 +38,7 @@ endif()
 
 file(GLOB_RECURSE wpilibc_native_src allwpilib/wpilibc/src/main/native/cpp/*.cpp)
 
-add_library (wpilibc ${wpilibc_native_src})
+add_library (wpilibc ${wpilibc_native_src} WPILibVersion.cpp)
 target_link_libraries(wpilibc wpiHal cscore ntcore wpiutil ${OpenCV_LIBS})
 
 target_include_directories(wpilibc PUBLIC
