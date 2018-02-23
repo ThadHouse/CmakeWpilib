@@ -118,4 +118,15 @@ if (NOT WITHOUT_JAVA)
   add_library (wpilibJNI ${wpilibj_native_src})
   target_link_libraries (wpilibJNI wpiHal wpiutil)
   target_include_directories(wpilibJNI PRIVATE "${CMAKE_CURRENT_BINARY_DIR}\\jniheaders\\jniheaders" ${JNI_INCLUDE_DIRS})
+  add_dependencies(wpilibJNI wpilibj_jni_headers)
+
+  get_property(WPILIBJ_JAR_FILE TARGET wpilibj_jar PROPERTY JAR_FILE)
+
+  install(FILES ${WPILIBJ_JAR_FILE} DESTINATION ${java_lib_dest})
+  install(TARGETS wpilibJNI EXPORT wpilibJNI DESTINATION "${main_lib_dest}")
+
+  set_property(TARGET wpilibj_jar PROPERTY FOLDER "java")
+  set_property(TARGET wpilibj_jni_headers PROPERTY FOLDER "java")
+
+  set_property(TARGET wpilibJNI PROPERTY FOLDER "libraries")
 endif()
