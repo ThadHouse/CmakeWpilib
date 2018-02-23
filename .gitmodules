@@ -13,3 +13,4 @@
 [submodule "libraries/allwpilib/allwpilib"]
 	path = libraries/allwpilib/allwpilib
 	url = https://github.com/wpilibsuite/allwpilib
+	branch = master
