@@ -82,36 +82,11 @@ if (NOT WITHOUT_JAVA)
   set(CMAKE_JNI_TARGET true)
   add_jar(wpilibj_jar ${wpilibj_java_src} WPILibVersion.java INCLUDE_JARS wpiutil_jar ntcore_jar cscore_jar ${OPENCV_JAR_FILE} OUTPUT_NAME wpilibj)
 
+  file (STRINGS WPILibJNIClasses.txt WPILIBJ_JNI_CLASSES)
+
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}\\jniheaders)
   create_javah(TARGET wpilibj_jni_headers
-              CLASSES
-              edu.wpi.first.wpilibj.can.CANJNI
-              edu.wpi.first.wpilibj.hal.FRCNetComm
-              edu.wpi.first.wpilibj.hal.HAL
-              edu.wpi.first.wpilibj.hal.HALUtil
-              edu.wpi.first.wpilibj.hal.JNIWrapper
-              edu.wpi.first.wpilibj.hal.AccelerometerJNI
-              edu.wpi.first.wpilibj.hal.AnalogJNI
-              edu.wpi.first.wpilibj.hal.AnalogGyroJNI
-              edu.wpi.first.wpilibj.hal.ConstantsJNI
-              edu.wpi.first.wpilibj.hal.CounterJNI
-              edu.wpi.first.wpilibj.hal.DigitalGlitchFilterJNI
-              edu.wpi.first.wpilibj.hal.DIOJNI
-              edu.wpi.first.wpilibj.hal.EncoderJNI
-              edu.wpi.first.wpilibj.hal.I2CJNI
-              edu.wpi.first.wpilibj.hal.InterruptJNI
-              edu.wpi.first.wpilibj.hal.NotifierJNI
-              edu.wpi.first.wpilibj.hal.PortsJNI
-              edu.wpi.first.wpilibj.hal.PWMJNI
-              edu.wpi.first.wpilibj.hal.RelayJNI
-              edu.wpi.first.wpilibj.hal.SPIJNI
-              edu.wpi.first.wpilibj.hal.SolenoidJNI
-              edu.wpi.first.wpilibj.hal.CompressorJNI
-              edu.wpi.first.wpilibj.hal.PDPJNI
-              edu.wpi.first.wpilibj.hal.PowerJNI
-              edu.wpi.first.wpilibj.hal.SerialPortJNI
-              edu.wpi.first.wpilibj.hal.OSSerialPortJNI
-              edu.wpi.first.wpilibj.hal.ThreadsJNI
+              CLASSES ${WPILIBJ_JNI_CLASSES}
               CLASSPATH wpilibj_jar wpiutil_jar ntcore_jar cscore_jar ${OPENCV_JAR_FILE}
               OUTPUT_DIR jniheaders)
 
