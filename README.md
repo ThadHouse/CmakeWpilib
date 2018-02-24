@@ -14,3 +14,18 @@ If you have just downloaded the repo without the `--recursive` flag, use te foll
 `git submodule update --init --recursive`
 
 ## Building
+
+There are multiple different scenarios for building this. For most people, they will want ntcore, cscore and wpiutil with both Java and C++ support. That is the configuration we will start with.
+
+In order to build this configuration, there are 2 major prerequisites that will be required. These are the Java JDK, and OpenCV. For Java JDK, as long as it is installed through your distribution, and the JAVA_HOME environmental variable is set, it should work. For OpenCV, we recommend you build and install the newest release. This build should then see the installed OpenCV.
+
+Once these prerequisites are installed, create a build folder. Then run `cmake path/to/source/code`. This should set up cmake. Then `make` can be ran to actually run the build.
+
+
+
+
+If you don't need Java, you can use the flag `-DWITHOUT_JAVA=ON`. This will skip the Java build and remove the jdk requirement.
+
+If you don't need Cscore, you can use the flag `-DWITHOUT_CSCORE=ON`. This will remove the OpenCV requirement of the build.
+
+In addition, this build system supports building the main wpilib code as well. To enable this (it's disabled by default), use `-DWITHOUT_ALLWPILIB=OFF`. This will build the simulator HAL.

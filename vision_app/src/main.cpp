@@ -9,6 +9,7 @@
 int main() {
   auto inst = NT_GetDefaultInstance();
   (void)inst;
+#ifndef _WIN32
   cs::UsbCamera camera{"usbcam", 0};
   camera.SetVideoMode(cs::VideoMode::kMJPEG, 320, 240, 30);
   cs::MjpegServer mjpegServer{"httpserver", 8081};
@@ -34,4 +35,5 @@ int main() {
   }
 
   return 0;
+#endif
 }
