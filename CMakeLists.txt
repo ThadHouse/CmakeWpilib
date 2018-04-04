@@ -10,6 +10,8 @@ endif()
 project(wpilib_vision)
 cmake_minimum_required(VERSION 3.3.0)
 
+INCLUDE(CPack)
+
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
