@@ -14,19 +14,23 @@ if (NOT WITHOUT_JAVA)
 
     file(GLOB_RECURSE JAVA_SOURCES ntcore/src/main/java/*.java)
     set(CMAKE_JNI_TARGET true)
-    add_jar(ntcore_jar ${JAVA_SOURCES} INCLUDE_JARS wpiutil_jar OUTPUT_NAME ntcore)
 
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}\\jniheaders)
-    create_javah(TARGET ntcore_jni_headers
-                CLASSES edu.wpi.first.networktables.NetworkTablesJNI
-                CLASSPATH ntcore_jar wpiutil_jar
-                OUTPUT_DIR jniheaders)
-    include_directories("${CMAKE_CURRENT_BINARY_DIR}\\jniheaders\\jniheaders")
+    if(${CMAKE_VERSION} VERSION_LESS "3.11.0")
+        add_jar(ntcore_jar ${JAVA_SOURCES} INCLUDE_JARS wpiutil_jar OUTPUT_NAME ntcore)
+        file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}\\jniheaders)
+        create_javah(TARGET ntcore_jni_headers
+                    CLASSES edu.wpi.first.networktables.NetworkTablesJNI
+                    CLASSPATH ntcore_jar wpiutil_jar
+                    OUTPUT_DIR jniheaders)
+        set_property(TARGET ntcore_jni_headers PROPERTY FOLDER "java")
+    else()
+        add_jar(ntcore_jar ${JAVA_SOURCES} INCLUDE_JARS wpiutil_jar OUTPUT_NAME ntcore GENERATE_NATIVE_HEADERS ntcore_jni_headers)
+    endif()
+
     get_property(NTCORE_JAR_FILE TARGET ntcore_jar PROPERTY JAR_FILE)
     install(FILES ${NTCORE_JAR_FILE} DESTINATION "${java_lib_dest}")
 
     set_property(TARGET ntcore_jar PROPERTY FOLDER "java")
-    set_property(TARGET ntcore_jni_headers PROPERTY FOLDER "java")
 
 endif()
 
@@ -38,12 +42,12 @@ add_library(ntcore ${ntcore_native_src} ${ntcore_jni_src})
 target_include_directories(ntcore PUBLIC
                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ntcore/src/main/native/include>
                             $<INSTALL_INTERFACE:${include_dest}/ntcore>)
-target_link_libraries(ntcore wpiutil)
+target_link_libraries(ntcore PUBLIC wpiutil)
 
 set_property(TARGET ntcore PROPERTY FOLDER "libraries")
 
 if (NOT WITHOUT_JAVA)
-    add_dependencies(ntcore ntcore_jni_headers)
+    target_link_libraries(ntcore PRIVATE ntcore_jni_headers)
 endif()
 
 install(TARGETS ntcore EXPORT ntcore DESTINATION "${main_lib_dest}")

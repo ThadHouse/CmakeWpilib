@@ -25,27 +25,30 @@ if (NOT WITHOUT_JAVA)
 
     file(GLOB_RECURSE JAVA_SOURCES cscore/src/main/java/*.java)
     set(CMAKE_JNI_TARGET true)
-    add_jar(cscore_jar ${JAVA_SOURCES} INCLUDE_JARS wpiutil_jar ${OPENCV_JAR_FILE} OUTPUT_NAME cscore)
 
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}\\jniheaders)
-    create_javah(TARGET cscore_jni_headers
-                CLASSES edu.wpi.cscore.CameraServerJNI
-                CLASSPATH cscore_jar wpiutil_jar ${OPENCV_JAR_FILE}
-                OUTPUT_DIR jniheaders)
-    include_directories("${CMAKE_CURRENT_BINARY_DIR}\\jniheaders\\jniheaders")
+    if(${CMAKE_VERSION} VERSION_LESS "3.11.0")
+        add_jar(cscore_jar ${JAVA_SOURCES} INCLUDE_JARS wpiutil_jar ${OPENCV_JAR_FILE} OUTPUT_NAME cscore)
+        file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}\\jniheaders)
+        create_javah(TARGET cscore_jni_headers
+                    CLASSES edu.wpi.first.networktables.CameraServerJNI
+                    CLASSPATH cscore_jar wpiutil_jar ${OPENCV_JAR_FILE}
+                    OUTPUT_DIR jniheaders)
+        set_property(TARGET cscore_jni_headers PROPERTY FOLDER "java")
+    else()
+        add_jar(cscore_jar ${JAVA_SOURCES} INCLUDE_JARS wpiutil_jar ${OPENCV_JAR_FILE} OUTPUT_NAME cscore GENERATE_NATIVE_HEADERS cscore_jni_headers)
+    endif()
     get_property(CSCORE_JAR_FILE TARGET cscore_jar PROPERTY JAR_FILE)
 
     install(FILES ${CSCORE_JAR_FILE} DESTINATION "${java_lib_dest}")
     install(FILES ${OPENCV_JAR_FILE} DESTINATION "${java_lib_dest}")
 
     set_property(TARGET cscore_jar PROPERTY FOLDER "java")
-    set_property(TARGET cscore_jni_headers PROPERTY FOLDER "java")
 
 endif()
 
 file(GLOB cscore_native_src cscore/src/main/native/cpp/*.cpp)
 add_library(cscore ${cscore_native_src} ${cscore_jni_src})
-target_link_libraries(cscore wpiutil ${OpenCV_LIBS})
+target_link_libraries(cscore PUBLIC wpiutil ${OpenCV_LIBS})
 target_include_directories(cscore PUBLIC
                  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cscore/src/main/native/include>
                             $<INSTALL_INTERFACE:${include_dest}/cscore>)
@@ -53,7 +56,7 @@ target_include_directories(cscore PUBLIC
 set_property(TARGET cscore PROPERTY FOLDER "libraries")
 
 if (NOT WITHOUT_JAVA)
-    add_dependencies(cscore cscore_jni_headers)
+    target_link_libraries(cscore PRIVATE cscore_jni_headers)
 endif()
 
 install(TARGETS cscore EXPORT cscore DESTINATION "${main_lib_dest}")

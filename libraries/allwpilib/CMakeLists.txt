@@ -80,20 +80,24 @@ if (NOT WITHOUT_JAVA)
   file (GLOB_RECURSE wpilibj_native_src allwpilib/wpilibj/src/main/native/cpp/*.cpp)
   file (GLOB_RECURSE wpilibj_java_src allwpilib/wpilibj/src/main/java/*.java)
   set(CMAKE_JNI_TARGET true)
-  add_jar(wpilibj_jar ${wpilibj_java_src} WPILibVersion.java INCLUDE_JARS wpiutil_jar ntcore_jar cscore_jar ${OPENCV_JAR_FILE} OUTPUT_NAME wpilibj)
 
-  file (STRINGS WPILibJNIClasses.txt WPILIBJ_JNI_CLASSES)
-
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}\\jniheaders)
-  create_javah(TARGET wpilibj_jni_headers
-              CLASSES ${WPILIBJ_JNI_CLASSES}
-              CLASSPATH wpilibj_jar wpiutil_jar ntcore_jar cscore_jar ${OPENCV_JAR_FILE}
-              OUTPUT_DIR jniheaders)
+  if(${CMAKE_VERSION} VERSION_LESS "3.11.0")
+    add_jar(wpilibj_jar ${wpilibj_java_src} WPILibVersion.java INCLUDE_JARS wpiutil_jar ntcore_jar cscore_jar ${OPENCV_JAR_FILE} OUTPUT_NAME wpilibj)
+    file (STRINGS WPILibJNIClasses.txt WPILIBJ_JNI_CLASSES)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}\\jniheaders)
+    create_javah(TARGET wpilibj_jni_headers
+                CLASSES ${WPILIBJ_JNI_CLASSES}
+                CLASSPATH wpilibj_jar wpiutil_jar ntcore_jar cscore_jar ${OPENCV_JAR_FILE}
+                OUTPUT_DIR jniheaders)
+    set_property(TARGET wpilibj_jni_headers PROPERTY FOLDER "java")
+  else()
+    add_jar(wpilibj_jar ${wpilibj_java_src} WPILibVersion.java INCLUDE_JARS wpiutil_jar ntcore_jar cscore_jar ${OPENCV_JAR_FILE} OUTPUT_NAME wpilibj GENERATE_NATIVE_HEADERS wpilibj_jni_headers)
+  endif()
 
   add_library (wpilibJNI ${wpilibj_native_src})
-  target_link_libraries (wpilibJNI wpiHal wpiutil)
-  target_include_directories(wpilibJNI PRIVATE "${CMAKE_CURRENT_BINARY_DIR}\\jniheaders\\jniheaders" ${JNI_INCLUDE_DIRS})
-  add_dependencies(wpilibJNI wpilibj_jni_headers)
+  target_link_libraries (wpilibJNI PUBLIC wpiHal wpiutil)
+  target_include_directories(wpilibJNI PRIVATE ${JNI_INCLUDE_DIRS})
+  target_link_libraries(wpilibJNI PRIVATE wpilibj_jni_headers)
 
   get_property(WPILIBJ_JAR_FILE TARGET wpilibj_jar PROPERTY JAR_FILE)
 
@@ -101,7 +105,6 @@ if (NOT WITHOUT_JAVA)
   install(TARGETS wpilibJNI EXPORT wpilibJNI DESTINATION "${main_lib_dest}")
 
   set_property(TARGET wpilibj_jar PROPERTY FOLDER "java")
-  set_property(TARGET wpilibj_jni_headers PROPERTY FOLDER "java")
 
   set_property(TARGET wpilibJNI PROPERTY FOLDER "libraries")
 endif()
