@@ -1,5 +1,7 @@
 # WPILIB Cmake Vision Build System
 
+This build system has been integrated into the main allwpilib build system. Once the documentation has been added there, everything here will be removed.
+
 WPILib currently uses a gradle build system. This works great for a preset build on our fully supported sytems, however it has issues when attempting to build libraries for unsupported systems. The biggest issues in OpenCV. Devices such as the NVIDIA Jetson TX1 have their own OpenCV libraries, however the gradle build system has no easy way to use these libraries for CameraServer support. This is a substitute build system designed to use Cmake. It builds the wpiutil, ntcore and cscore libraries, so is great for coprocessors. Note this is not supported by WPI or FIRST directly.
 
 ## Downloading
